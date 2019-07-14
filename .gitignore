@@ -3,7 +3,7 @@ venv
 
 *.pyc
 .python-version
-test.py
+test_script.py
 dist/
 build/
 *.egg-info/
