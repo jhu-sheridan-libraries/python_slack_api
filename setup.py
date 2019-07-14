@@ -2,7 +2,7 @@ import setuptools
 
 setuptools.setup(
     name="jhulib_slack",
-    version="0.0.2",
+    version="0.0.3",
     author="Derek Belrose",
     author_email="dbelrose@jhu.edu",
     description=("A python implementation of the slack API including SCIM"),
