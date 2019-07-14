@@ -1,10 +1,12 @@
 import json
 from .. import exceptions
 
+
 class UserAdmin(object):
     def __init__(self, slackAPIClient):
         self.api_client = slackAPIClient
         self.api_client.rest_url = slackAPIClient.slack_url + "/scim/v1"
+
     def test(self):
         return(self.api_client)
 
@@ -18,7 +20,7 @@ class UserAdmin(object):
         """
 
         userJson = {
-            "schemas": [ 
+            "schemas": [
                 "urn:scim:schemas:core:1.0",
                 "urn:scim:schemas:extension:enterprise:1.0"
             ],
@@ -35,8 +37,9 @@ class UserAdmin(object):
                 }
             ]
         }
-        response = self.api_client._post(self.api_client.rest_url + "/Users", data=json.dumps(userJson))
-        print(response.text)        
+        response = self.api_client._post(self.api_client.rest_url + "/Users",
+                                         data=json.dumps(userJson))
+        return(response.json())
 
     def list(self):
         """ Lists all users (up to 300) in the workspace
@@ -46,9 +49,8 @@ class UserAdmin(object):
                 JSON formatted blob of users
         """
 
-        url = self.api_client.rest_url + "/Users"
-        params = { 'count': 300}
-        response = self.api_client._get(self.api_client.rest_url + "/Users", params=params)
+        params = {'count': 300}
+        response = self.api_client._get(self.api_client.rest_url + "/Users", params=params)  # noqa: E501
         return(response.json())
 
     def find(self, searchParams):
@@ -62,7 +64,7 @@ class UserAdmin(object):
                 id
         Returns:
             A slack user json blob
-        
+
         Raises Exceptions:
             UserNotFound:
                 A use has not been found that matches the included requirements
@@ -76,11 +78,11 @@ class UserAdmin(object):
                     if email['value'] == searchParams['email']:
                         sEmail = email['value']
                         break
-                        
+
                 if sEmail is not None:
                     return(user)
-            elif 'givenName' in searchParams.keys() or 'familyName' in searchParams.keys():
-                for (key,value) in searchParams.items():
+            elif 'givenName' in searchParams.keys() or 'familyName' in searchParams.keys():  # noqa: E501
+                for (key, value) in searchParams.items():
                     if user['name'][key] == value:
                         return(user)
             elif 'id' in searchParams.keys():
@@ -89,18 +91,17 @@ class UserAdmin(object):
             else:
                 raise exceptions.UnimplementedSearchMethod()
         raise exceptions.UserNotFound()
-    
+
     def deactivate(self, id):
         """ Deactivates a particular user using their email address
 
         Inputs:
             email
-        
+
         Returns:
             Not sure yet
         """
-        user = None
-        response = self.api_client._delete(self.api_client.rest_url + "/Users/{}".format(id))
+        response = self.api_client._delete(self.api_client.rest_url + "/Users/{}".format(id))  # noqa: E501
         return(response)
 
     def list_inactive(self):
@@ -113,5 +114,5 @@ class UserAdmin(object):
         for user in self.list()['Resources']:
             if user['active'] is False:
                 inactive_users.append(user)
-        
+
         return inactive_users
